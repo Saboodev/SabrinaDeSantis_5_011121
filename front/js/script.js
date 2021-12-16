@@ -4,8 +4,8 @@ productsList();
 
 // Récupérer les produits depuis l'API
 
-function productsList() {
-    fetch(url)
+async function productsList() {
+    await fetch(url)
         .then(function (response) {
             return response.json();
         })
@@ -41,8 +41,6 @@ function productsList() {
                 articleContainer.appendChild(productDescribe);
                 productDescribe.classList.add("productDescription");
                 productDescribe.innerHTML = apiResponse[article].description;
-
-
             }
     });
 }
