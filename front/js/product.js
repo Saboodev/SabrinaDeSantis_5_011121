@@ -1,3 +1,4 @@
+// Création des variables param et id qui recherchent l'id dans un lien
 let param = new URL(location.href).searchParams;
 let id = param.get("id");
 
@@ -9,9 +10,10 @@ let productDescription = document.querySelector("#description");
 let productPrice = document.querySelector("#price");
 let productSelect = document.querySelector("#colors");
 
-// On appelle l'id de la page
+// On joue les fonctions qui sont détaillées ensuite
 getProduct();
 
+// On appelle l'id de la page
 function getProduct() {
     fetch(`http://localhost:3000/api/products/${id}`)
         .then(function (response) {
@@ -39,7 +41,7 @@ function getProduct() {
                 productColor.textContent = option;
                 productColor.value = option;
                 productSelect.appendChild(productColor);
-            }  
+            }
         })
         .catch((err) => console.log('Erreur : ' +err));
 };
@@ -48,27 +50,38 @@ function getProduct() {
 
 add ();
 
-// Créatoion fonction d'ajout de produit
+// Création fonction d'ajout de produit
 function add() {
-    const addToCart = document.querySelector("#addToCart");
-    const productQuantity = document.querySelector("#itemQuantity");
+    let addToCart = document.querySelector("#addToCart");
+    let productQuantity = document.querySelector("#itemQuantity");
     let cart = {
-        addedQuantity: productChoosen.value,
-        color: productChoosen.option,
+        color: (document.querySelector("#colors", "option")),
+        quantity: (document.querySelector("#quantity").value),
         _id: id,
     };
+
+    // Création d'une confirmation quand produit ajouté au panier
+    function confirmation() {
+        if (window.confirm(`Votre produit a bien été ajouté au panier
+Consulter le panier OK ou Poursuivre vos achats Annuler`)) {
+            window.location.href = "cart.html";
+        }
+    }
+    
+    productQuantity ++;
 
     // Ecouter le bouton d'envoi et envoyer le panier
     addToCart.addEventListener("click", (e) => {
         e.preventDefault();
         let addProduct = JSON.parse(localStorage.getItem("cart"));
+        
 
         // On récupère les valeurs, si quantité > 0
         if (productQuantity > 0 && productQuantity < 100) {
             addToCart.innerText = `Ajouté !`;
-            
+
             // Si produit déjà enregistré dans le LS, on ajoute le produit 
-            if (addProduct) {
+            if (localStorage.getItem("cart") != null) {
                 addProduct.push(cart);
                 localStorage.setItem("cart", JSON.stringify(addProduct));
                 confirmation();  
@@ -80,19 +93,6 @@ function add() {
                 console.log(addProduct);
                 confirmation ();
             }     
-        }else {
-            alert(`La valeur doit être comprise entre 1 et 100`);
-        } 
-        
-        // Fonction confirmation quand produit ajouté au panier
-        const confirmation = () => {
-            if (window.confirm(`Votre produit a bien été ajouté au panier
-    Consulter le panier OK ou Poursuivre vos achats Annuler`))
-            {
-                window.location.href = "cart.html";
-            }
         }
-    
-    });
+    })
 }
-
