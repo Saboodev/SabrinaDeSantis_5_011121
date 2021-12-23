@@ -36,7 +36,6 @@ function getProduct() {
             let choiceColor = canape.colors;
             for (let i = 0; i < choiceColor.length; i++) {
                 let option = choiceColor[i];
-                // console.log(option);
                 productColor = document.createElement("option");
                 productColor.textContent = option;
                 productColor.value = option;
@@ -53,12 +52,6 @@ add ();
 // Création fonction d'ajout de produit
 function add() {
     let addToCart = document.querySelector("#addToCart");
-    let productQuantity = document.querySelector("#itemQuantity");
-    let cart = {
-        color: (document.querySelector("#colors", "option")),
-        quantity: (document.querySelector("#quantity").value),
-        _id: id,
-    };
 
     // Création d'une confirmation quand produit ajouté au panier
     function confirmation() {
@@ -67,30 +60,34 @@ Consulter le panier OK ou Poursuivre vos achats Annuler`)) {
             window.location.href = "cart.html";
         }
     }
-    
-    productQuantity ++;
 
     // Ecouter le bouton d'envoi et envoyer le panier
     addToCart.addEventListener("click", (e) => {
         e.preventDefault();
-        let addProduct = JSON.parse(localStorage.getItem("cart"));
-        
+        let productQuantity = document.querySelector("#itemQuantity");
+        productQuantity ++;
 
         // On récupère les valeurs, si quantité > 0
         if (productQuantity > 0 && productQuantity < 100) {
+            let cart = {
+                color: (document.querySelector("#colors").selectedOptions[0].value),
+                quantity: parseFloat(document.querySelector("#quantity").value),
+                _id: id,
+            };
             addToCart.innerText = `Ajouté !`;
+            let addProduct = JSON.parse(localStorage.getItem("purchase"));
 
             // Si produit déjà enregistré dans le LS, on ajoute le produit 
-            if (localStorage.getItem("cart") != null) {
+            if (localStorage.getItem("purchase") != null) {
                 addProduct.push(cart);
-                localStorage.setItem("cart", JSON.stringify(addProduct));
+                localStorage.setItem("purchase", JSON.stringify(addProduct));
                 confirmation();  
+
             // Si pas de produit dans localStorage, on le crée          
-            }else {
+            }else {  
                 addProduct = [];
                 addProduct.push(cart);
-                localStorage.setItem("cart", JSON.stringify(addProduct));
-                console.log(addProduct);
+                localStorage.setItem("purchase", JSON.stringify(addProduct));
                 confirmation ();
             }     
         }
