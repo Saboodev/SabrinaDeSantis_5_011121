@@ -41,9 +41,7 @@ function getProduct() {
                 productColor.value = option;
                 productSelect.appendChild(productColor);
             }
-        })
-        .catch((err) => console.log('Erreur : ' +err));
-};
+    
 
 // *************** Gestion du localStorage *************
 
@@ -64,16 +62,20 @@ Consulter le panier OK ou Poursuivre vos achats Annuler`)) {
     // Ecouter le bouton d'envoi et envoyer le panier
     addToCart.addEventListener("click", (e) => {
         e.preventDefault();
-        let productQuantity = document.querySelector("#itemQuantity");
-        productQuantity ++;
+        let colorOption = (document.querySelector("#colors").selectedOptions[0].value);
+        let productQuantity = document.querySelector("#quantity").value; 
 
         // On récupère les valeurs, si quantité > 0
         if (productQuantity > 0 && productQuantity < 100) {
             let cart = {
-                color: (document.querySelector("#colors").selectedOptions[0].value),
-                quantity: parseFloat(document.querySelector("#quantity").value),
+                color: colorOption,
+                quantity: productQuantity,
                 _id: id,
+                name: canape.name,
+                price: canape.price,
+                img: canape.imageUrl,
             };
+            console.log(cart);
             addToCart.innerText = `Ajouté !`;
             let addProduct = JSON.parse(localStorage.getItem("purchase"));
 
@@ -93,3 +95,6 @@ Consulter le panier OK ou Poursuivre vos achats Annuler`)) {
         }
     })
 }
+})
+.catch((err) => console.log('Erreur : ' +err));
+};

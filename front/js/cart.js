@@ -1,12 +1,14 @@
-let infoProducts = JSON.parse(localStorage.getItem("purchase"));
+let addProduct = JSON.parse(localStorage.getItem("purchase"));
+console.log(addProduct);
+let cartOrder =`http://localhost:3000/api/products/order`;
 
 addedCart ();
 
 function addedCart () {
-    console.log("coucou");
     // Si le LS contient un produit
     if (localStorage.getItem("purchase")) {
-        for (let product in infoProducts) {
+        let i= 0;
+        for (let product in addProduct) {
         let cart__item = document.createElement("article");
         document.querySelector("#cart__items").appendChild(cart__item);
         cart__item.classList.add("cart__item");
@@ -16,49 +18,59 @@ function addedCart () {
         cartImg.classList.add("cart__item__img");
 
         let productImg = document.createElement("img");
-        cart__item__img.appendChild(productImg);
-        productImg.src = infoProducts[product].imageUrl;
+        cartImg.appendChild(productImg);
+        productImg.src = addProduct[product].imageUrl;
 
         let cartItemContent = document.createElement("div");
-        cart__items.appendChild(cartItemContent);
+        document.querySelector("#cart__items").appendChild(cartItemContent);
         cartItemContent.classList.add("cart__item__content");
 
         let cartDescription = document.createElement("div");
-        cart__item__content.appendChild(cartDescription);
+        cartItemContent.appendChild(cartDescription);
         cartDescription.classList.add("cart__item__content__description");
 
         let cartDescriptionTitle = document.createElement("h2");
-        cart__item__content__description.appendChild(cartDescriptionTitle);
-        cartDescriptionTitle.innerHTML = infoProducts[product].name;
+        cartDescription.appendChild(cartDescriptionTitle);
+        cartDescriptionTitle.innerHTML = addProduct[product].name;
         
         let cartDescriptionColor = document.createElement("p");
-        cart__item__content__description.appendChild(cartDescriptionColor);
-        cartDescriptionColor.innerHTML = infoProducts[product].colors;
+        cartDescription.appendChild(cartDescriptionColor);
+        cartDescriptionColor.innerHTML = addProduct[product].color.value;
 
         let cartDescriptionPrice = document.createElement("p");
-        cart__item__content__description.appendChild(cartDescriptionPrice);
-        cartDescriptionPrice.innerHTML = infoProducts[product].price;
+        cartDescription.appendChild(cartDescriptionPrice);
+        cartDescriptionPrice.innerHTML = addProduct[product].price;
 
         let cartSettings = document.createElement("div");
-        cart__item__content.appendChild(cartSettings);
+        cartItemContent.appendChild(cartSettings);
         cartSettings.classList.add("cart__item__content__settings");
 
         let cartSettingsQuantity = document.createElement("div");
-        cart__item__content__settings.appendChild(cartSettingsQuantity);
+        cartSettings.appendChild(cartSettingsQuantity);
         cartSettingsQuantity.classList.add("cart__item__content__settings__quantity");
 
         let cartQuantity = document.createElement("p");
-        cart__item__content__settings__quantity.appendChild(cartQuantity);
-        cartQuantity.innerHTML = `Qté : + infoProducts[product].quantity`;
+        cartSettingsQuantity.appendChild(cartQuantity);
+        cartQuantity.innerHTML = `Qté :`;
+        
+        let cartInput = document.createElement("input");
+        cartSettingsQuantity.appendChild(cartInput);
+        cartInput.innerHTML = addProduct[product].quantity;
 
         let cartDelete = document.createElement("div");
-        cart__item__content__settings.appendChild(cartDelete);
+        cartSettings.appendChild(cartDelete);
         cartDelete.classList.add("cart__item__content__settings__delete");
 
         let cartDeleteItem = document.createElement("p");
-        cart__item__content__settings__delete.appendChild(cartDeleteItem);
+        cartDelete.appendChild(cartDeleteItem);
         cartDeleteItem.classList.add("cart__item__content__settings__delete");
         cartDeleteItem.innerText = `Supprimer`;
         };
     }
+}
+
+if(addProduct == null) {
+    let cartNull = document.createElement("p");
+    document.querySelector("#cart__items").appendChild(cartNull);
+    cartNull.innerText = `Votre panier est vide`;
 }
