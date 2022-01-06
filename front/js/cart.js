@@ -19,7 +19,7 @@ function addedCart () {
 
         let productImg = document.createElement("img");
         cartImg.appendChild(productImg);
-        productImg.src = addProduct[product].imageUrl;
+        productImg.src = addProduct[product].img;
 
         let cartItemContent = document.createElement("div");
         document.querySelector("#cart__items").appendChild(cartItemContent);
@@ -35,7 +35,7 @@ function addedCart () {
         
         let cartDescriptionColor = document.createElement("p");
         cartDescription.appendChild(cartDescriptionColor);
-        cartDescriptionColor.innerHTML = addProduct[product].color.value;
+        cartDescriptionColor.innerHTML = addProduct[product].color;
 
         let cartDescriptionPrice = document.createElement("p");
         cartDescription.appendChild(cartDescriptionPrice);
