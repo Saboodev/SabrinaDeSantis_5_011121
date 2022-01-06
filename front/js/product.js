@@ -27,7 +27,6 @@ function getProduct() {
         // Organiser les données des produits
         .then(function (apiResponse) {
             let canape = apiResponse;
-            // console.log(canape);
             productImg.src = canape.imageUrl;
             productTitle.innerHTML = canape.name;
             productPrice.innerHTML = canape.price;
@@ -43,58 +42,66 @@ function getProduct() {
             }
     
 
-// *************** Gestion du localStorage *************
+    // *************** Gestion du localStorage *************    
+    add ();
 
-add ();
+    // Création fonction d'ajout de produit
+    function add() {
+        let addToCart = document.querySelector("#addToCart");
 
-// Création fonction d'ajout de produit
-function add() {
-    let addToCart = document.querySelector("#addToCart");
-
-    // Création d'une confirmation quand produit ajouté au panier
-    function confirmation() {
-        if (window.confirm(`Votre produit a bien été ajouté au panier
-Consulter le panier OK ou Poursuivre vos achats Annuler`)) {
-            window.location.href = "cart.html";
+        // Création d'une confirmation quand produit ajouté au panier
+        function confirmation() {
+            if (window.confirm(`Votre produit a bien été ajouté au panier
+    Consulter le panier OK ou Poursuivre vos achats Annuler`)) {
+                window.location.href = "cart.html";
+            }
         }
+
+        // Ecouter le bouton d'envoi et envoyer le panier
+        addToCart.addEventListener("click", (e) => {
+            e.preventDefault();
+            let colorOption = (document.querySelector("#colors").selectedOptions[0].value);
+            let productQuantity = parseInt(document.querySelector("#quantity").value, 10); 
+
+            // On récupère les valeurs, si quantité > 0
+            if (productQuantity > 0 && productQuantity < 100) {
+                let product = {
+                    color: colorOption,
+                    quantity: productQuantity,
+                    _id: id,
+                    name: canape.name,
+                    price: canape.price,
+                    img: canape.imageUrl,
+                };
+                console.log(product);
+                addToCart.innerText = `Ajouté !`;
+                let cart = JSON.parse(localStorage.getItem("purchase"));
+                // si le panier est null on a un tableau vide
+                if (cart == null){
+                    cart = [];
+                }
+   
+                let foundElement = null; 
+                // On crée une boucle forEach dans le panier pour chercher dans chaque élément 
+                cart.forEach(element => {
+                    // on crée une condition si on a le même id et même couleur que les éléments du panier
+                    if (id == element._id && colorOption == element.color) {
+                        // on stocke l'élément dans la variable foundElement
+                        foundElement = element;
+                    }
+                });
+                // si foundElement trouvé on ajoute la nouvelle quantité à l'ancienne
+                if (foundElement != null) {
+                    foundElement.quantity = foundElement.quantity + productQuantity;
+                }else { 
+                    // sinon on push le panier dans le LS
+                    cart.push(product);
+                }
+                // on envoie les éléments du panier dans le LS
+                localStorage.setItem("purchase", JSON.stringify(cart));
+            }       
+        })
     }
-
-    // Ecouter le bouton d'envoi et envoyer le panier
-    addToCart.addEventListener("click", (e) => {
-        e.preventDefault();
-        let colorOption = (document.querySelector("#colors").selectedOptions[0].value);
-        let productQuantity = document.querySelector("#quantity").value; 
-
-        // On récupère les valeurs, si quantité > 0
-        if (productQuantity > 0 && productQuantity < 100) {
-            let cart = {
-                color: colorOption,
-                quantity: productQuantity,
-                _id: id,
-                name: canape.name,
-                price: canape.price,
-                img: canape.imageUrl,
-            };
-            console.log(cart);
-            addToCart.innerText = `Ajouté !`;
-            let addProduct = JSON.parse(localStorage.getItem("purchase"));
-
-            // Si produit déjà enregistré dans le LS, on ajoute le produit 
-            if (localStorage.getItem("purchase") != null) {
-                addProduct.push(cart);
-                localStorage.setItem("purchase", JSON.stringify(addProduct));
-                confirmation();  
-
-            // Si pas de produit dans localStorage, on le crée          
-            }else {  
-                addProduct = [];
-                addProduct.push(cart);
-                localStorage.setItem("purchase", JSON.stringify(addProduct));
-                confirmation ();
-            }     
-        }
-    })
-}
 })
 .catch((err) => console.log('Erreur : ' +err));
 };

@@ -55,7 +55,7 @@ function addedCart () {
         
         let cartInput = document.createElement("input");
         cartSettingsQuantity.appendChild(cartInput);
-        cartInput.innerHTML = addProduct[product].quantity;
+        cartInput.value = addProduct[product].quantity;
 
         let cartDelete = document.createElement("div");
         cartSettings.appendChild(cartDelete);
