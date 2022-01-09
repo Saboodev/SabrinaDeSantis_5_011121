@@ -1,13 +1,13 @@
 let addProduct = JSON.parse(localStorage.getItem("purchase"));
-console.log(addProduct);
+// console.log(addProduct);
 let cartOrder =`http://localhost:3000/api/products/order`;
 
 addedCart ();
 
 function addedCart () {
+    this.addedCart= [];
     // Si le LS contient un produit
     if (localStorage.getItem("purchase")) {
-        let i= 0;
         for (let product in addProduct) {
         let cart__item = document.createElement("article");
         document.querySelector("#cart__items").appendChild(cart__item);
@@ -39,7 +39,7 @@ function addedCart () {
 
         let cartDescriptionPrice = document.createElement("p");
         cartDescription.appendChild(cartDescriptionPrice);
-        cartDescriptionPrice.innerHTML = addProduct[product].price;
+        cartDescriptionPrice.innerHTML = addProduct[product].price + '€';
 
         let cartSettings = document.createElement("div");
         cartItemContent.appendChild(cartSettings);
@@ -65,6 +65,27 @@ function addedCart () {
         cartDelete.appendChild(cartDeleteItem);
         cartDeleteItem.classList.add("cart__item__content__settings__delete");
         cartDeleteItem.innerText = `Supprimer`;
+      
+        let totalQuantity = document.querySelector("#totalQuantity");
+        let totalPrice = document.querySelector("#totalPrice");
+        let quantity = cartInput.value;
+        console.log(quantity);
+        const total = () => {
+            let quantityTotal = 0;
+            let priceTotal = 0;
+            if (addProduct) {
+                addProduct.forEach(element => {    
+                    quantityTotal += element.quantity;
+                    console.log(quantityTotal);
+                    priceTotal += element.price * element.quantity;
+                    console.log(quantityTotal);
+                    totalQuantity.innerText = quantityTotal;
+                    totalPrice.innerText = priceTotal;
+                })
+            }
+        }     
+        total();
+        
         };
     }
 }
