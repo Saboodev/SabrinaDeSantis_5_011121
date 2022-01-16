@@ -9,6 +9,7 @@ function addedCart () {
     // Si le LS contient un produit
     if (localStorage.getItem("purchase")) {
         for (let product in addProduct) {
+        // Création des éléments constituant le panier
         let cart__item = document.createElement("article");
         document.querySelector("#cart__items").appendChild(cart__item);
         cart__item.classList.add("cart__item");
@@ -74,49 +75,56 @@ function addedCart () {
         cartDeleteItem.dataset.color = addProduct[product].color;
         cartDeleteItem.classList.add("deleteItem");
         cartDeleteItem.innerText = `Supprimer`;
-      
+        
+        // Gestion des quantités à afficher
         let totalQuantity = document.querySelector("#totalQuantity");
         let totalPrice = document.querySelector("#totalPrice");
         let quantity = cartInput.value;
-        console.log(quantity);
         const total = () => {
             let quantityTotal = 0;
             let priceTotal = 0;
-            if (addProduct) {
-                // cartInput.addEventListener('change', function (e) {
-                //     e.preventdefault;
-                //     console.log(cartInput.value)
-                //     localStorage.getItem("purchase");
-                //     addProduct.push(cartInput.value);
-                //     console.log(addProduct);
-                // })
-                addProduct.forEach(element => {  
-                    // // cartInput.addEventListener('change', function () {
-                        // quantityTotal.remove(cartInput.value);
-                    // //     quantity += this.value;
-                    // //     quantity +=  element.quantity;
-                    //     console.log(element.quantity);
-                    // // })  
-                    quantityTotal += element.quantity;
-                    priceTotal += element.price * element.quantity;
-                    totalQuantity.innerText = quantityTotal;
-                    totalPrice.innerText = priceTotal;  
-                })
+            if (addProduct) {               
+                let itemQuantity = document.querySelectorAll(".itemQuantity");
+                    itemQuantity.forEach(element => {  
+                        element.addEventListener('change', function (changeInput) {
+                            id = element.dataset.idElement;
+                            color = element.dataset.color;
+                            quantity = element.value;
+                            console.log(id + " " + color);
+                            // Creer la même boucle que la maj de l'ajout au panier
+                            let foundElement = null; 
+                            // On crée une boucle forEach dans le panier pour chercher dans chaque élément 
+                            addProduct.forEach(element => {
+                                // on crée une condition si on a le même id et même couleur que les éléments du panier
+                                if (id == element._id && color == element.color) {
+                                    // on stocke l'élément dans la variable foundElement
+                                    foundElement = element;                                }
+                            });
+                            // si foundElement trouvé on ajoute la nouvelle quantité à l'ancienne
+                            if (foundElement != null) {
+                                foundElement.quantity = quantity;
+                            }else { 
+                                // sinon on push le panier dans le LS
+                                addProduct.push(product);
+                                // console.log(addProduct);
+                            }
+                            // on envoie les éléments du panier dans le LS
+                            localStorage.setItem("purchase", JSON.stringify(addProduct));
+                        })  
+                    })
+
+                    addProduct.forEach(element => {
+                        quantityTotal = element.quantity;
+                        console.log(quantityTotal);
+                        priceTotal += element.price * element.quantity;
+                        totalQuantity.innerText = quantityTotal;
+                        totalPrice.innerText = priceTotal; 
+                    })         
             }
         }     
         total();
         };
     }
-    let itemQuantity = document.querySelectorAll(".itemQuantity");
-        itemQuantity.forEach(element => {  
-            element.addEventListener('change', function () {
-                id = element.dataset.idElement;
-                color = element.dataset.color;
-                quantity = element.value;
-                // Creer la même boucle que la maj de l'ajout au panier
-                console.log(id + " " + color);
-            })  
-        })
 
     let deleteBtn = document.querySelectorAll(".deleteItem");
         deleteBtn.forEach(element =>{
@@ -133,6 +141,20 @@ if(addProduct == null) {
     document.querySelector("#cart__items").appendChild(cartNull);
     cartNull.innerText = `Votre panier est vide`;
 }
+
+let clearCart = document.createElement("a");
+document.querySelector(".cart__price").appendChild(clearCart);
+clearCart.classList.add("deleteAll");
+clearCart.innerText = "Vider le panier";
+clearCart.style.textDecoration = "none";
+clearCart.style.display = "block";
+clearCart.style.cursor = "pointer";
+clearCart.style.textAlign = "center";
+clearCart.style.color = "white";
+document.querySelector(".deleteAll").addEventListener("click", function(){
+    localStorage.clear();
+    return cartNull;
+})
 
 // ********** Traitement des données formulaire
 
@@ -255,3 +277,23 @@ const validEmail = function(inputEmail) {
         pMsg.style.fontWeight = "bold"; 
     }
 };
+
+
+const sendOrder = async function () {
+    const options = {
+        method: "POST",
+        body: JSON.stringify(order),
+        headers: {
+            'Accept': 'application/json',
+            "Content-Type": "application/json"
+        },
+    }
+    fetch(cartOrder, options)
+    .then(response => response.json())
+    .then(data => {
+        localStorage.clear();
+        localStorage.setItem("orderID", data.orderId);
+        window.location.href = "confirmation.html";
+    })
+}
+.catch(error => console.error(error));

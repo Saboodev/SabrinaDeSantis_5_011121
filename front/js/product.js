@@ -14,8 +14,8 @@ let productSelect = document.querySelector("#colors");
 getProduct();
 
 // On appelle l'id de la page
-function getProduct() {
-    fetch(`http://localhost:3000/api/products/${id}`)
+async function getProduct() {
+    await fetch(`http://localhost:3000/api/products/${id}`)
         .then(function (response) {
             return response.json();
         })
@@ -49,14 +49,6 @@ function getProduct() {
     function add() {
         let addToCart = document.querySelector("#addToCart");
 
-        // Création d'une confirmation quand produit ajouté au panier
-        function confirmation() {
-            if (window.confirm(`Votre produit a bien été ajouté au panier
-    Consulter le panier OK ou Poursuivre vos achats Annuler`)) {
-                window.location.href = "cart.html";
-            }
-        }
-
         // Ecouter le bouton d'envoi et envoyer le panier
         addToCart.addEventListener("click", (e) => {
             e.preventDefault();
@@ -70,7 +62,7 @@ function getProduct() {
                     quantity: productQuantity,
                     _id: id,
                     name: canape.name,
-                    price: canape.price,
+                    // price: canape.price,
                     img: canape.imageUrl,
                 };
                 console.log(product);
@@ -105,3 +97,32 @@ function getProduct() {
 })
 .catch((err) => console.log('Erreur : ' +err));
 };
+
+// Création de boutons de navigation
+
+let navigateContainer = document.createElement("div");
+document.querySelector(".item__content").appendChild(navigateContainer);
+navigateContainer.classList.add("navigate__container");
+navigateContainer.style.display = "flex";
+navigateContainer.style.justifyContent = "space-around";
+navigateContainer.style.margin = "1rem";
+
+let returnIndex = document.createElement("a");
+navigateContainer.appendChild(returnIndex);
+returnIndex.href = "index.html";
+returnIndex.innerText = `Retour aux produits`;
+returnIndex.classList.add("return__link");
+returnIndex.style.textDecoration = "none";
+returnIndex.style.color = "white";
+
+let returnCart = document.createElement("a");
+navigateContainer.appendChild(returnCart);
+returnCart.href = "cart.html";
+returnCart.innerText = `Aller au panier`; 
+returnCart.classList.add("return__link");
+returnCart.style.textDecoration = "none";
+returnCart.style.color = "white";
+
+// let returnStyle = document.querySelectorAll(".return__link");
+// returnStyle.style.textDecoration = "none";
+// returnStyle.style.color = "white";
