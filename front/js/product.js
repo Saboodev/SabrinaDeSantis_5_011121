@@ -1,6 +1,6 @@
 // Création des variables param et id qui recherchent l'id dans un lien
-let param = new URL(location.href).searchParams;
-let id = param.get("id");
+let params = new URL(location.href).searchParams;
+let id = params.get("id");
 
 // On crée les variables des différentes données à traiter
 let productImg = document.createElement("img");
@@ -28,6 +28,7 @@ async function getProduct() {
         .then(function (apiResponse) {
             let canape = apiResponse;
             productImg.src = canape.imageUrl;
+            productImg.alt = "Photographie d'un canapé";
             productTitle.innerHTML = canape.name;
             productPrice.innerHTML = canape.price;
             productDescription.innerHTML = canape.description;
@@ -59,14 +60,17 @@ async function getProduct() {
             if (productQuantity > 0 && productQuantity < 100) {
                 let product = {
                     color: colorOption,
-                    quantity: productQuantity,
+                    quantity: parseInt(productQuantity, 10),
                     _id: id,
                     name: canape.name,
-                    // price: canape.price,
+                    price: canape.price,
                     img: canape.imageUrl,
                 };
                 console.log(product);
                 addToCart.innerText = `Ajouté !`;
+                setTimeout(function (){
+                    addToCart.innerText = "Ajouter au panier";
+                }, 4000);
                 let cart = JSON.parse(localStorage.getItem("purchase"));
                 // si le panier est null on a un tableau vide
                 if (cart == null){
@@ -123,6 +127,7 @@ returnCart.classList.add("return__link");
 returnCart.style.textDecoration = "none";
 returnCart.style.color = "white";
 
+// ne fonctionne que sur un des boutons ou pas du tout
 // let returnStyle = document.querySelectorAll(".return__link");
 // returnStyle.style.textDecoration = "none";
 // returnStyle.style.color = "white";

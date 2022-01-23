@@ -31,6 +31,7 @@ async function productsList() {
                 let productImg = document.createElement("img");
                 articleContainer.appendChild(productImg);
                 productImg.src = apiResponse[article].imageUrl;
+                productImg.alt = apiResponse[article].altTxt;
 
                 let productTitle = document.createElement("h3");
                 articleContainer.appendChild(productTitle);

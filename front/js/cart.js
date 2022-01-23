@@ -1,6 +1,4 @@
 let addProduct = JSON.parse(localStorage.getItem("purchase"));
-// console.log(addProduct);
-let cartOrder =`http://localhost:3000/api/products/order`;
 
 addedCart ();
 
@@ -21,6 +19,7 @@ function addedCart () {
         let productImg = document.createElement("img");
         cartImg.appendChild(productImg);
         productImg.src = addProduct[product].img;
+        productImg.alt = "Photographie d'un canapé";
 
         let cartItemContent = document.createElement("div");
         document.querySelector("#cart__items").appendChild(cartItemContent);
@@ -79,9 +78,8 @@ function addedCart () {
         // Gestion des quantités à afficher
         let totalQuantity = document.querySelector("#totalQuantity");
         let totalPrice = document.querySelector("#totalPrice");
-        let quantity = cartInput.value;
+        let quantity = parseInt(cartInput.value, 10);
         const total = () => {
-            let quantityTotal = 0;
             let priceTotal = 0;
             if (addProduct) {               
                 let itemQuantity = document.querySelectorAll(".itemQuantity");
@@ -89,10 +87,10 @@ function addedCart () {
                         element.addEventListener('change', function (changeInput) {
                             id = element.dataset.idElement;
                             color = element.dataset.color;
-                            quantity = element.value;
+                            quantity = parseInt(element.value, 10);
                             console.log(id + " " + color);
                             // Creer la même boucle que la maj de l'ajout au panier
-                            let foundElement = null; 
+                            let foundElement = []; 
                             // On crée une boucle forEach dans le panier pour chercher dans chaque élément 
                             addProduct.forEach(element => {
                                 // on crée une condition si on a le même id et même couleur que les éléments du panier
@@ -106,33 +104,54 @@ function addedCart () {
                             }else { 
                                 // sinon on push le panier dans le LS
                                 addProduct.push(product);
-                                // console.log(addProduct);
+                                console.log(addProduct);
                             }
                             // on envoie les éléments du panier dans le LS
                             localStorage.setItem("purchase", JSON.stringify(addProduct));
+                            totalQuantity.innerText = foundElement.quantity;
+                            total();
                         })  
                     })
-
+                    // Gestion des qtés et du prix total
+                    let quantityTotal = 0;
                     addProduct.forEach(element => {
-                        quantityTotal = element.quantity;
-                        console.log(quantityTotal);
+                        // on boucle pour récupérer chaque qté et prix
+                        quantityTotal += element.quantity;
+                        console.log(element.quantity);
                         priceTotal += element.price * element.quantity;
-                        totalQuantity.innerText = quantityTotal;
-                        totalPrice.innerText = priceTotal; 
-                    })         
+                    })  
+                    totalQuantity.innerText = quantityTotal;
+                    totalPrice.innerText = priceTotal; 
+
+                    let deleteBtn = document.querySelectorAll(".deleteItem");
+                    deleteBtn.forEach(element =>{
+                        element.addEventListener('click', function () {
+                            id = element.dataset.idElement;
+                            color = element.dataset.color;
+                            console.log("clic");
+                            if (id == element._id && color == element.color && quantity ==0) {
+                                localStorage.clear();
+                            }
+                        })   
+                    })
             }
-        }     
+        }  
         total();
         };
-    }
+    }    
 
-    let deleteBtn = document.querySelectorAll(".deleteItem");
-        deleteBtn.forEach(element =>{
-            element.addEventListener('click', function () {
-                id = element.dataset.idElement;
-                color = element.dataset.color;
-                console.log(id + " " + color);
-            })   
+    let clearCart = document.createElement("a");
+        document.querySelector(".cart__price").appendChild(clearCart);
+        clearCart.classList.add("deleteAll");
+        clearCart.innerText = "Vider le panier";
+        clearCart.style.textDecoration = "none";
+        clearCart.style.display = "block";
+        clearCart.style.cursor = "pointer";
+        clearCart.style.textAlign = "center";
+        clearCart.style.color = "white";
+        document.querySelector(".deleteAll").addEventListener("click", function(){
+            localStorage.clear();
+            location.reload ();
         })
 }
 
@@ -142,40 +161,17 @@ if(addProduct == null) {
     cartNull.innerText = `Votre panier est vide`;
 }
 
-let clearCart = document.createElement("a");
-document.querySelector(".cart__price").appendChild(clearCart);
-clearCart.classList.add("deleteAll");
-clearCart.innerText = "Vider le panier";
-clearCart.style.textDecoration = "none";
-clearCart.style.display = "block";
-clearCart.style.cursor = "pointer";
-clearCart.style.textAlign = "center";
-clearCart.style.color = "white";
-document.querySelector(".deleteAll").addEventListener("click", function(){
-    localStorage.clear();
-    return cartNull;
-})
-
 // ********** Traitement des données formulaire
-
-const contactOrder = {
-    firstName : document.querySelector("#firstName").value,
-    lastName : document.querySelector("#lastName").value,
-    address : document.querySelector("#address").value,
-    city : document.querySelector("#city").value,
-    email : document.querySelector("#email").value,
-}
-console.log(contactOrder);
 
 let form = document.querySelector(".cart__order__form");
 
 // ****** Ecoute de la modification des input formulaire
 form.firstName.addEventListener('change', function (){
-    validFirstName(this);
+    validText(this);
 });
 
 form.lastName.addEventListener('change', function (){
-    validLastName(this);
+    validText(this);
 });
 
 form.address.addEventListener('change', function (){
@@ -183,39 +179,21 @@ form.address.addEventListener('change', function (){
 });
 
 form.city.addEventListener('change', function (){
-    validCity(this);
+    validText(this);
 });
 
 form.email.addEventListener('change', function (){
     validEmail(this);
 });
 
-// *******validation des données du formulaire
-
-const validFirstName = function(inputFirstName) {
+const validText = function(inputText) {
     // RegExp pour la validation du prénom
-    let firstNameRegExp = new RegExp ('^[a-zA-Z.-\s ]{2,25}$', 'g');
+    // La RegExp accepte minuscules, point, espace, accents, tiret entre 2 et 25 caractères toutes casses
+    let textRegExp = new RegExp ('^[a-z.\s éêèàëÉÈÊË\-]{2,25}$', 'gi');
     // On récupère le p sous l'input
-    let pMsg = inputFirstName.nextElementSibling;
+    let pMsg = inputText.nextElementSibling;
      // On définit un msg si false
-     if(firstNameRegExp.test(inputFirstName.value) == false){
-        pMsg.innerHTML = "Données incorrectes";
-        pMsg.style.color = "red";
-        pMsg.style.fontWeight = "bold";
-     } else {
-        pMsg.innerHTML = "*";
-        pMsg.style.color = "green";
-        pMsg.style.fontWeight = "bold";
-     }
-}
-
-const validLastName = function(inputLastName) {
-    // RegExp pour la validation du nom
-    let lastNameRegExp = new RegExp ('^[a-zA-Z.-\s ]{2,25}$', 'g');
-    // On récupère le p sous l'input
-    let pMsg = inputLastName.nextElementSibling;
-     // On définit un msg si false
-     if(lastNameRegExp.test(inputLastName.value) == false){
+     if(textRegExp.test(inputText.value) == false){
         pMsg.innerHTML = "Données incorrectes";
         pMsg.style.color = "red";
         pMsg.style.fontWeight = "bold";
@@ -227,38 +205,22 @@ const validLastName = function(inputLastName) {
 }
 
 const validAddress = function(inputAddress) {
-    // RegExp pour la validation de l'adresse
-    let addressRegExp = new RegExp ('^[a-zA-Z0-9.-\s ]{2,90}$', 'g');
+    // RegExp pour la validation du mail
+    let addressRegExp = new RegExp ('^[a-zA-ZéêèàëÉÈÊË0-9.,-\s ]{2,90}$', 'g');
     // On récupère le p sous l'input
     let pMsg = inputAddress.nextElementSibling;
-     // On définit un msg si false
-     if(addressRegExp.test(inputAddress.value) == false){
-        pMsg.innerHTML = "Données incorrectes";
-        pMsg.style.color = "red";
-        pMsg.style.fontWeight = "bold";
-     } else {
-        pMsg.innerHTML = "*";
-        pMsg.style.color = "green";
-        pMsg.style.fontWeight = "bold";
-     }
-}
 
-const validCity = function(inputCity) {
-    // RegExp pour la validation de la ville
-    let cityRegExp = new RegExp ('^[a-zA-Z.-\s ]{2,25}$', 'g');
-    // On récupère le p sous l'input
-    let pMsg = inputCity.nextElementSibling;
-     // On définit un msg si false
-     if(cityRegExp.test(inputCity.value) == false){
+    // On définit un msg si false
+    if(addressRegExp.test(inputAddress.value) == false){
         pMsg.innerHTML = "Données incorrectes";
         pMsg.style.color = "red";
         pMsg.style.fontWeight = "bold";
-     } else {
+    } else {
         pMsg.innerHTML = "*";
         pMsg.style.color = "green";
-        pMsg.style.fontWeight = "bold";
-     }
-}
+        pMsg.style.fontWeight = "bold"; 
+    }
+};
 
 const validEmail = function(inputEmail) {
     // RegExp pour la validation du mail
@@ -278,22 +240,52 @@ const validEmail = function(inputEmail) {
     }
 };
 
-
-const sendOrder = async function () {
-    const options = {
-        method: "POST",
-        body: JSON.stringify(order),
-        headers: {
-            'Accept': 'application/json',
-            "Content-Type": "application/json"
-        },
-    }
-    fetch(cartOrder, options)
-    .then(response => response.json())
-    .then(data => {
-        localStorage.clear();
-        localStorage.setItem("orderID", data.orderId);
-        window.location.href = "confirmation.html";
-    })
+let submitBtn = document.querySelector(".cart__order__form__submit");
+let products = [];
+for (product of addProduct) {
+    products.push(product._id);
 }
-.catch(error => console.error(error));
+console.log(products);
+
+submitBtn.addEventListener("click", function(e){
+    if(firstName.value
+    && lastName.value 
+    && address.value
+    && city.value
+    && email.value != false){
+        e.preventDefault();
+        let contacts = {
+            firstName : document.querySelector("#firstName").value,
+            lastName : document.querySelector("#lastName").value,
+            address : document.querySelector("#address").value,
+            city : document.querySelector("#city").value,
+            email : document.querySelector("#email").value,
+        }
+        console.log(contacts);
+        let order = {
+            contact: contacts,
+            products: products,
+        }
+    const sendOrder = async function () {
+        const options = {
+            method: "POST",
+            body: JSON.stringify(order),
+            headers: {
+                'Accept': 'application/json',
+                "Content-Type": "application/json"
+            },
+        }
+        fetch("http://localhost:3000/api/products/order", options)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            localStorage.clear();
+            localStorage.setItem("orderID", data.orderId);
+            window.location.href = 'confirmation.html?id='+ data.orderId;
+        })
+        .catch((err) => console.log('Erreur : ' +err));
+    }
+    sendOrder(order);
+}
+})
+
