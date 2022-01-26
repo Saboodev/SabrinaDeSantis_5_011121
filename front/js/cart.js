@@ -1,5 +1,11 @@
 let addProduct = JSON.parse(localStorage.getItem("purchase"));
 
+// const fetchForPrice = async() => { 
+//     // on récupère l'API
+//     await fetch('http://localhost:3000/api/products')
+//     .then(res => res.json().then(json => products = json));
+// }
+
 addedCart ();
 
 function addedCart () {
@@ -88,7 +94,6 @@ function addedCart () {
                             id = element.dataset.idElement;
                             color = element.dataset.color;
                             quantity = parseInt(element.value, 10);
-                            console.log(id + " " + color);
                             // Creer la même boucle que la maj de l'ajout au panier
                             let foundElement = []; 
                             // On crée une boucle forEach dans le panier pour chercher dans chaque élément 
@@ -96,11 +101,13 @@ function addedCart () {
                                 // on crée une condition si on a le même id et même couleur que les éléments du panier
                                 if (id == element._id && color == element.color) {
                                     // on stocke l'élément dans la variable foundElement
-                                    foundElement = element;                                }
+                                    foundElement = element;
+                                }
                             });
                             // si foundElement trouvé on ajoute la nouvelle quantité à l'ancienne
                             if (foundElement != null) {
                                 foundElement.quantity = quantity;
+                                console.log(foundElement);
                             }else { 
                                 // sinon on push le panier dans le LS
                                 addProduct.push(product);
@@ -125,13 +132,14 @@ function addedCart () {
 
                     let deleteBtn = document.querySelectorAll(".deleteItem");
                     deleteBtn.forEach(element =>{
-                        element.addEventListener('click', function () {
-                            id = element.dataset.idElement;
-                            color = element.dataset.color;
-                            console.log("clic");
-                            if (id == element._id && color == element.color && quantity ==0) {
-                                localStorage.clear();
-                            }
+                        element.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            let supId = addProduct[product]._id;
+                            let supColor = addProduct[product].color;
+                            addProduct = addProduct.filter(p => p._id !== supId || p.color !== supColor);
+                            console.log(addProduct);
+                            localStorage.setItem('purchase', JSON.stringify(addProduct));
+                            location.reload();
                         })   
                     })
             }
@@ -241,11 +249,6 @@ const validEmail = function(inputEmail) {
 };
 
 let submitBtn = document.querySelector(".cart__order__form__submit");
-let products = [];
-for (product of addProduct) {
-    products.push(product._id);
-}
-console.log(products);
 
 submitBtn.addEventListener("click", function(e){
     if(firstName.value
@@ -262,6 +265,11 @@ submitBtn.addEventListener("click", function(e){
             email : document.querySelector("#email").value,
         }
         console.log(contacts);
+        let products = [];
+        for (product of addProduct) {
+            products.push(product._id);
+        }
+        console.log(products);
         let order = {
             contact: contacts,
             products: products,

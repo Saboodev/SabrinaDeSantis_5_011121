@@ -17,7 +17,6 @@ async function productsList() {
         // Organiser les données des produits
         .then(function (apiResponse) {
             const canape = apiResponse;
-            console.log(canape);
             for (let article in canape) {
                 let productLink = document.createElement("a");
                 document.querySelector(".items").appendChild(productLink);

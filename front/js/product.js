@@ -66,7 +66,6 @@ async function getProduct() {
                     price: canape.price,
                     img: canape.imageUrl,
                 };
-                console.log(product);
                 addToCart.innerText = `Ajouté !`;
                 setTimeout(function (){
                     addToCart.innerText = "Ajouter au panier";
@@ -127,7 +126,3 @@ returnCart.classList.add("return__link");
 returnCart.style.textDecoration = "none";
 returnCart.style.color = "white";
 
-// ne fonctionne que sur un des boutons ou pas du tout
-// let returnStyle = document.querySelectorAll(".return__link");
-// returnStyle.style.textDecoration = "none";
-// returnStyle.style.color = "white";
