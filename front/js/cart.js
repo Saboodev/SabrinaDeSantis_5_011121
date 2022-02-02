@@ -1,10 +1,21 @@
 let addProduct = JSON.parse(localStorage.getItem("purchase"));
 
-// const fetchForPrice = async() => { 
-//     // on récupère l'API
-//     await fetch('http://localhost:3000/api/products')
-//     .then(res => res.json().then(json => products = json));
-// }
+async function getProductPrice(id) {
+    return fetch(`http://localhost:3000/api/products/${id}`)
+        .then(function (response) {
+            return response.json();
+        })
+        .catch(function (err) { 
+        let productLocation = document.querySelector("cartDescriptionPrice");
+        productLocation.innerHTML = "Nous ne parvenons pas à afficher le prix de votre produit";
+        })
+        // retourner le prix du canapé
+        .then(function (apiResponse) {
+            let canape = apiResponse;
+            return canape.price;
+        });
+    }
+
 
 addedCart ();
 
@@ -45,7 +56,9 @@ function addedCart () {
 
         let cartDescriptionPrice = document.createElement("p");
         cartDescription.appendChild(cartDescriptionPrice);
-        cartDescriptionPrice.innerHTML = addProduct[product].price + '€';
+        let price = getProductPrice(addProduct[product]._id);
+        price.then((apiResponse)=> {
+            cartDescriptionPrice.innerHTML = apiResponse + '€';
 
         let cartSettings = document.createElement("div");
         cartItemContent.appendChild(cartSettings);
@@ -124,8 +137,8 @@ function addedCart () {
                     addProduct.forEach(element => {
                         // on boucle pour récupérer chaque qté et prix
                         quantityTotal += element.quantity;
-                        console.log(element.quantity);
-                        priceTotal += element.price * element.quantity;
+                        priceTotal += apiResponse * element.quantity;
+                        console.log(apiResponse);
                     })  
                     totalQuantity.innerText = quantityTotal;
                     totalPrice.innerText = priceTotal; 
@@ -145,7 +158,7 @@ function addedCart () {
             }
         }  
         total();
-        };
+        });
     }    
 
     let clearCart = document.createElement("a");
@@ -197,7 +210,7 @@ form.email.addEventListener('change', function (){
 const validText = function(inputText) {
     // RegExp pour la validation du prénom
     // La RegExp accepte minuscules, point, espace, accents, tiret entre 2 et 25 caractères toutes casses
-    let textRegExp = new RegExp ('^[a-z.\s éêèàëÉÈÊË\-]{2,25}$', 'gi');
+    let textRegExp = new RegExp ('^[a-z.\'\s éêèàëÉÈÊË\-]{1,25}$', 'gi');
     // On récupère le p sous l'input
     let pMsg = inputText.nextElementSibling;
      // On définit un msg si false
@@ -251,49 +264,60 @@ const validEmail = function(inputEmail) {
 let submitBtn = document.querySelector(".cart__order__form__submit");
 
 submitBtn.addEventListener("click", function(e){
-    if(firstName.value
-    && lastName.value 
-    && address.value
-    && city.value
-    && email.value != false){
+    if(validText (firstName.value) 
+    && validText (lastName.value) 
+    && validAddress (address.value)
+    && validText (city.value)
+    && validEmail (email.value)){
         e.preventDefault();
-        let contacts = {
-            firstName : document.querySelector("#firstName").value,
-            lastName : document.querySelector("#lastName").value,
-            address : document.querySelector("#address").value,
-            city : document.querySelector("#city").value,
-            email : document.querySelector("#email").value,
+        let result = true;
+        let itemQuantity = document.querySelectorAll(".itemQuantity");
+        itemQuantity.forEach(element => {
+            if (element.value < 1 || element.value > 100) {
+                result = false;
+            }
+        });
+        if (result) {
+            console.log(result);
+            e.preventDefault();
+            let contacts = {
+                firstName : document.querySelector("#firstName").value,
+                lastName : document.querySelector("#lastName").value,
+                address : document.querySelector("#address").value,
+                city : document.querySelector("#city").value,
+                email : document.querySelector("#email").value,
+            }
+            console.log(contacts);
+            let products = [];
+            for (product of addProduct) {
+                products.push(product._id);
+            }
+            console.log(products);
+            let order = {
+                contact: contacts,
+                products: products,
+            }
+            const sendOrder = async function () {
+                const options = {
+                    method: "POST",
+                    body: JSON.stringify(order),
+                    headers: {
+                        'Accept': 'application/json',
+                        "Content-Type": "application/json"
+                    },
+                }
+                fetch("http://localhost:3000/api/products/order", options)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    localStorage.clear();
+                    localStorage.setItem("orderID", data.orderId);
+                    window.location.href = 'confirmation.html?id='+ data.orderId;
+                })
+                .catch((err) => console.log('Erreur : ' +err));
+            }
+            sendOrder(order);
         }
-        console.log(contacts);
-        let products = [];
-        for (product of addProduct) {
-            products.push(product._id);
-        }
-        console.log(products);
-        let order = {
-            contact: contacts,
-            products: products,
-        }
-    const sendOrder = async function () {
-        const options = {
-            method: "POST",
-            body: JSON.stringify(order),
-            headers: {
-                'Accept': 'application/json',
-                "Content-Type": "application/json"
-            },
-        }
-        fetch("http://localhost:3000/api/products/order", options)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            localStorage.clear();
-            localStorage.setItem("orderID", data.orderId);
-            window.location.href = 'confirmation.html?id='+ data.orderId;
-        })
-        .catch((err) => console.log('Erreur : ' +err));
-    }
-    sendOrder(order);
 }
 })
-
+}

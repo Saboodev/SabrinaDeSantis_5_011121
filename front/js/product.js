@@ -63,7 +63,7 @@ async function getProduct() {
                     quantity: parseInt(productQuantity, 10),
                     _id: id,
                     name: canape.name,
-                    price: canape.price,
+                    // price: canape.price,
                     img: canape.imageUrl,
                 };
                 addToCart.innerText = `Ajouté !`;
