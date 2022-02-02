@@ -169,8 +169,7 @@ function displayCart () {
                             totalPrice.innerText = priceTotal; 
                         }
                         );
-                    })  
-                        
+                    })           
                 }
             }  
         });
