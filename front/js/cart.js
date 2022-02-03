@@ -138,8 +138,8 @@ function displayCart () {
                     deleteBtn.forEach(element =>{
                         element.addEventListener('click', function (e) {
                             e.preventDefault();
-                            let supId = panier[product]._id;
-                            let supColor = panier[product].color;
+                            let supId = element.dataset.idElement;
+                            let supColor = element.dataset.color;
                             panier = panier.filter(p => p._id !== supId || p.color !== supColor);
                             console.log(panier);
                             localStorage.setItem('purchase', JSON.stringify(panier));
