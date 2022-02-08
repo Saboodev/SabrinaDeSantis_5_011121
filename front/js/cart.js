@@ -223,7 +223,7 @@ form.email.addEventListener('change', function (){
 
 // RETOURNE VRAI SI C'EST VALIDE, FAUX SINON
 const validText = function(inputText) {
-    // RegExp pour la validation du prénom
+    // RegExp pour la validation du prénom, nom et ville
     // La RegExp accepte minuscules, point, espace, accents, tiret entre 2 et 25 caractères toutes casses
     let textRegExp = new RegExp ('^[a-z.\'\s éêèàëÉÈÊË\-]{1,25}$', 'gi');
     // On récupère le p sous l'input
@@ -233,7 +233,7 @@ const validText = function(inputText) {
     if(textRegExp.test(inputText.value) == false){
         if (pMsg != null) 
         {
-        pMsg.innerHTML = "Données incorrectes";
+        pMsg.innerHTML = "Veuillez saisir les informations demandées";
         pMsg.style.color = "red";
         pMsg.style.fontWeight = "bold";
         }
@@ -260,10 +260,10 @@ const validAddress = function(inputAddress) {
     if(addressRegExp.test(inputAddress.value) == false){
         if (pMsg != null) 
         {
-            pMsg.innerHTML = "Données incorrectes";
+            pMsg.innerHTML = "Veuillez saisir correctement votre adresse";
             pMsg.style.color = "red";
             pMsg.style.fontWeight = "bold";
-        }
+        } 
         return false ; 
     } else {
         if (pMsg != null) 
@@ -273,8 +273,7 @@ const validAddress = function(inputAddress) {
             pMsg.style.fontWeight = "bold"; 
         }
         return true ;
-       
-    }
+    } 
 };
 
 // RETOURNE VRAI SI C'EST VALIDE, FAUX SINON
@@ -288,7 +287,7 @@ const validEmail = function(inputEmail) {
     if(emailRegExp.test(inputEmail.value) == false){
         if (pMsg != null) 
         {
-            pMsg.innerHTML = "Données incorrectes";
+            pMsg.innerHTML = "Veuillez saisir correctement votre email";
             pMsg.style.color = "red";
             pMsg.style.fontWeight = "bold";
         }

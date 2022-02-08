@@ -1,4 +1,4 @@
-// Création des variables param et id qui recherchent l'id dans un lien
+// Création des variables params et id qui recherchent l'id dans un lien
 let params = new URL(location.href).searchParams;
 let id = params.get("id");
 
@@ -57,7 +57,7 @@ async function getProduct() {
             let productQuantity = parseInt(document.querySelector("#quantity").value, 10); 
 
             // On récupère les valeurs, si quantité > 0
-            if (productQuantity > 0 && productQuantity < 100) {
+            if (productQuantity > 0 && productQuantity < 100 && colors.value != 0) {
                 let product = {
                     color: colorOption,
                     quantity: parseInt(productQuantity, 10),
