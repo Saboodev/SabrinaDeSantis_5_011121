@@ -7,14 +7,14 @@ Votre client est Kanap, une marque de canapés qui vend ses produits depuis sa b
 
 ## Objectifs
 
--- Interagir avec un web service avec JavaScript
--- Valider des données issues de sources externes
--- Créer un plan de test pour une application
--- Gérer des événements JavaScript
+- Interagir avec un web service avec JavaScript
+- Valider des données issues de sources externes
+- Créer un plan de test pour une application
+- Gérer des événements JavaScript
 
 ### Backend
 #### Installation
--- Node doit être installé sur votre ordinateur.  
--- Cloner le répertoire et se positionner dans le dossier backend avec un terminal.
--- Saisir la commande ```npm install```. 
--- Dans le dossier backend avec un terminal, saisir la commande ```node server```. Le serveur sera lancé sur le port 3000 par défaut.
+- Node doit être installé sur votre ordinateur.  
+- Cloner le répertoire et se positionner dans le dossier backend avec un terminal.
+- Saisir la commande ```npm install```. 
+- Dans le dossier backend avec un terminal, saisir la commande ```node server```. Le serveur sera lancé sur le port 3000 par défaut.
